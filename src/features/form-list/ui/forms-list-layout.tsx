@@ -102,7 +102,7 @@ export function FormsListLayoutContent({
   );
 }
 
-export function FormsListLayoutCards({ children, isMobile }: { children: React.ReactNode; isMobile?: boolean }) {
+export function FormsListLayoutCards({ children }: { children: React.ReactNode; isMobile?: boolean }) {
   return <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 3xl:grid-cols-6 gap-6">{children}</ul>;
 }
 

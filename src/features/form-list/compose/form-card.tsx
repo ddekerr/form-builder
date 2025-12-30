@@ -21,7 +21,7 @@ export function FormCard({ form }: { form: ApiSchema['Form'] }) {
             disabled={publicForm.getIsPending(form.id)}
             className="cursor-pointer mr-6"
             checked={form.isPublic}
-            onCheckedChange={() => publicForm.publish(form.id)}
+            onCheckedChange={() => publicForm.action(form.id)}
           />
           <span>{form.isPublic ? 'Опублікована' : 'Неопубліковна'}</span>
         </>
@@ -32,7 +32,7 @@ export function FormCard({ form }: { form: ApiSchema['Form'] }) {
             disabled={activeForm.getIsPending(form.id)}
             className="cursor-pointer mr-6"
             checked={form.isActive}
-            onCheckedChange={() => activeForm.activate(form.id)}
+            onCheckedChange={() => activeForm.action(form.id)}
           />
           <span>{form.isActive ? 'Активна' : 'Неактивна'}</span>
         </>
