@@ -1,0 +1,54 @@
+UnauthorizedError:
+  description: Неавторизований доступ
+  content:
+    application/json:
+      schema:
+        $ref: '#/schemas/Error'
+
+NotFoundError:
+  description: Ресурс не знайдено
+  content:
+    application/json:
+      schema:
+        $ref: '#/schemas/Error'
+
+ValidationError:
+  description: Помилка валідації
+  content:
+    application/json:
+      schema:
+        $ref: '#/schemas/Error'
+
+ConflictError:
+  description: Такий користувач вже існує
+  content:
+    application/json:
+      schema:
+        $ref: '#/schemas/Error'
+
+schemas:
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+        example: 'Something went wrong'
+      code:
+        type: string
+        example: 'INTERNAL_ERROR'
+
+  ValidationError:
+    type: object
+    properties:
+      message:
+        type: string
+        example: 'Validation failed'
+      code:
+        type: string
+        example: 'VALIDATION_ERROR'
+      errors:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            type: string

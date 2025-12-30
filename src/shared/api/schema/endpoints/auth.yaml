@@ -1,0 +1,116 @@
+Login:
+  tags: [Auth]
+  summary: Вхід в систему
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/LoginRequest'
+  responses:
+    '200':
+      description: Успішний вхід
+      content:
+        application/json:
+          schema:
+            $ref: '#/schemas/AuthResponse'
+    '400':
+      $ref: '../shared/responses.yaml#/ValidationError'
+    '401':
+      $ref: '../shared/responses.yaml#/UnauthorizedError'
+    '404':
+      $ref: '../shared/responses.yaml#/NotFoundError'
+
+Register:
+  tags: [Auth]
+  summary: Реєстрація нового користувача
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/RegisterRequest'
+  responses:
+    '201':
+      description: Користувач успішно зареєстрований
+      content:
+        application/json:
+          schema:
+            $ref: '#/schemas/AuthResponse'
+    '400':
+      $ref: '../shared/responses.yaml#/ValidationError'
+    '409':
+      $ref: '../shared/responses.yaml#/ConflictError'
+
+Logout:
+  tags: [Auth]
+  summary: Вихід з системи
+  security:
+    - bearerAuth: []
+  responses:
+    '204':
+      description: Успішний вихід
+
+Refresh:
+  tags: [Auth]
+  summary: Оновити access token
+  parameters:
+    - in: cookie
+      name: refresToken
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Access token оновлено успішно
+      content:
+        application/json:
+          schema:
+            $ref: '#/schemas/AuthResponse'
+    '401':
+      $ref: '../shared/responses.yaml#/UnauthorizedError'
+
+
+
+schemas:
+  User:
+    type: object
+    required: [id, email]
+    properties:
+      id:
+        type: string
+      email:
+        type: string
+        format: email
+
+  LoginRequest:
+    type: object
+    required: [email, password]
+    properties:
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+        format: password
+
+  RegisterRequest:
+    type: object
+    required: [email, password]
+    properties:
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+        format: password
+
+  AuthResponse:
+    type: object
+    required: [accessToken, user]
+    properties:
+      accessToken:
+        type: string
+      user:
+        $ref: '#/schemas/User'

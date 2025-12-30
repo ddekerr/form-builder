@@ -1,0 +1,219 @@
+CreateFormField:
+  tags: [Form Fields]
+  summary: Додати поле до форми
+  security:
+    - bearerAuth: []
+  parameters:
+    - in: path
+      name: formId
+      required: true
+      schema:
+        type: string
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/CreateFieldRequest'
+  responses:
+    '201':
+      description: Поле успішно додано
+      content:
+        application/json:
+          schema:
+            $ref: '#/schemas/FieldResponse'
+    '400':
+      $ref: '../shared/responses.yaml#/ValidationError'
+    '401':
+      $ref: '../shared/responses.yaml#/UnauthorizedError'
+
+UpdateFormField:
+  tags: [Form Fields]
+  summary: Оновити поле у форми
+  security:
+    - bearerAuth: []
+  parameters:
+    - in: path
+      name: formId
+      required: true
+      schema:
+        type: string
+    - in: path
+      name: fieldId
+      required: true
+      schema:
+        type: string
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/UpdateFieldRequest'
+  responses:
+    '201':
+      description: Поле успішно оновлено
+      content:
+        application/json:
+          schema:
+            $ref: '#/schemas/FieldResponse'
+    '400':
+      $ref: '../shared/responses.yaml#/ValidationError'
+    '401':
+      $ref: '../shared/responses.yaml#/UnauthorizedError'
+    '404':
+      $ref: '../shared/responses.yaml#/NotFoundError'
+
+DeleteFormField:
+  tags: [Form Fields]
+  summary: Оновити поле у форми
+  security:
+    - bearerAuth: []
+  parameters:
+    - in: path
+      name: formId
+      required: true
+      schema:
+        type: string
+    - in: path
+      name: fieldId
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Поле успішно видалено
+    '400':
+      $ref: '../shared/responses.yaml#/ValidationError'
+    '401':
+      $ref: '../shared/responses.yaml#/UnauthorizedError'
+    '404':
+      $ref: '../shared/responses.yaml#/NotFoundError'
+
+schemas:
+  FieldResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      formId:
+        type: string
+      fieldType:
+        type: string
+        enum: [text, email, number, textarea, select, radio, checkbox, date, file]
+        example: 'text'
+      label:
+        type: string
+        example: 'Ваше імʼя'
+      placeholder:
+        type: string
+        example: 'Введіть ваше імʼя'
+      isRequired:
+        type: boolean
+        example: true
+      sortOrder:
+        type: integer
+        example: 1
+      validationRules:
+        type: object
+      options:
+        type: array
+        items:
+          $ref: '#/schemas/OptionResponse'
+      createdAt:
+        type: string
+        format: date-time
+
+  CreateFieldRequest:
+    type: object
+    required: [fieldType, label]
+    properties:
+      fieldType:
+        type: string
+        enum: [text, email, number, textarea, select, radio, checkbox, date, file]
+        example: 'text'
+      label:
+        type: string
+        example: 'Ваше імʼя'
+        minLength: 3
+        maxLength: 255
+      placeholder:
+        type: string
+        example: 'Введіть ваше імʼя'
+      isRequired:
+        type: boolean
+        example: true
+      options:
+        type: array
+        items:
+          $ref: '#/schemas/CreateOptionRequest'
+      validationRules:
+        type: object
+
+  UpdateFieldRequest:
+    type: object
+    properties:
+      fieldType:
+        type: string
+        enum: [text, email, number, textarea, select, radio, checkbox, date, file]
+        example: 'text'
+      label:
+        type: string
+        example: 'Ваше імʼя'
+        minLength: 3
+        maxLength: 255
+      placeholder:
+        type: string
+        example: 'Введіть ваше імʼя'
+      isRequired:
+        type: boolean
+        example: true
+      options:
+        type: array
+        items:
+          $ref: '#/schemas/UpdateOptionRequest'
+      validationRules:
+        type: object
+
+  OptionResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      fieldId:
+        type: string
+      optionValue:
+        type: string
+        example: 'option1'
+      optionLabel:
+        type: string
+        example: 'Варіант 1'
+      sortOrder:
+        type: integer
+        example: 1
+
+  CreateOptionRequest:
+    type: object
+    required: [optionLabel, optionValue, sortOrder]
+    properties:
+      optionValue:
+        type: string
+        example: 'option1'
+      optionLabel:
+        type: string
+        example: 'Варіант 1'
+      sortOrder:
+        type: integer
+        example: 1
+
+  UpdateOptionRequest:
+    type: object
+    properties:
+      optionValue:
+        type: string
+        example: 'option1'
+      optionLabel:
+        type: string
+        example: 'Варіант 1'
+      sortOrder:
+        type: integer
+        example: 1

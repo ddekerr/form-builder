@@ -1,0 +1,289 @@
+openapi: 3.0.3
+info:
+  title: Form Builder API
+  description: API для створення, управління та заповнення форм
+  version: 1.0.0
+  contact:
+    name: Form Builder Team
+    email: support@formbuilder.com
+
+tags:
+  - name: Auth
+    description: Аутентифікація та авторизація
+  - name: Users
+    description: Управління користувачами
+  - name: Forms
+    description: Управління формами
+  - name: Form Fields
+    description: Поля форм
+  - name: Submissions
+    description: Відповіді на форми
+  - name: Share Links
+    description: Посилання для шарингу форм
+
+paths:
+  # ============ Аутентифікація ============
+  /auth/login:
+    post:
+      $ref: './endpoints/auth.yaml#/Login'
+
+  /auth/register:
+    post:
+      $ref: './endpoints/auth.yaml#/Register'
+
+  /auth/logout:
+    post:
+      $ref: './endpoints/auth.yaml#/Logout'
+
+  /auth/refresh:
+    post:
+      $ref: './endpoints/auth.yaml#/Refresh'
+  # ============ Користувачі ============
+  /users/profile:
+    get:
+      $ref: './endpoints/users.yaml#/GetProfile'
+
+    put:
+      $ref: './endpoints/users.yaml#/UpdateProfile'
+
+  # ============ Форми ============
+  /forms:
+    get:
+      $ref: './endpoints/forms.yaml#/GetFormList'
+
+    post:
+      $ref: './endpoints/forms.yaml#/CreateForm'
+
+  /forms/{formId}:
+    get:
+      $ref: './endpoints/forms.yaml#/GetForm'
+
+    patch:
+      $ref: './endpoints/forms.yaml#/UpdateForm'
+
+    delete:
+      $ref: './endpoints/forms.yaml#/DeleteForm'
+
+  /forms/{formId}/active:
+    patch:
+      $ref: './endpoints/forms.yaml#/UpdateFormActive'
+
+  /forms/{formId}/public:
+    patch:
+      $ref: './endpoints/forms.yaml#/UpdateFormPublic'
+
+  # ============ Поля форм ============
+  /forms/{formId}/fields:
+    post:
+      $ref: './endpoints/form-fields.yaml#/CreateFormField'
+
+  /forms/{formId}/fields/{fieldId}:
+    patch:
+      $ref: './endpoints/form-fields.yaml#/UpdateFormField'
+
+    delete:
+      $ref: './endpoints/form-fields.yaml#/DeleteFormField'
+
+  # # ============ Відповіді на форми ============
+  # /forms/{formId}/submit:
+  #   post:
+  #     tags: [Submissions]
+  #     summary: Надіслати відповідь на форму
+  #     parameters:
+  #       - in: path
+  #         name: formId
+  #         required: true
+  #         schema:
+  #           type: string
+  #       - in: query
+  #         name: slug
+  #         schema:
+  #           type: string
+  #         description: Slug посилання (якщо є)
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/SubmitFormRequest'
+  #     responses:
+  #       '201':
+  #         description: Відповідь успішно надіслана
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/SubmissionResponse'
+
+  # /forms/{formId}/submissions:
+  #   get:
+  #     tags: [Submissions]
+  #     summary: Отримати відповіді на форму
+  #     security:
+  #       - bearerAuth: []
+  #     parameters:
+  #       - in: path
+  #         name: formId
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       '200':
+  #         description: Список відповідей
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 $ref: '#/components/schemas/SubmissionResponse'
+
+  # # ============ Посилання для шарингу ============
+  # /forms/{formId}/share-links:
+  #   post:
+  #     tags: [Share Links]
+  #     summary: Створити посилання для шарингу
+  #     security:
+  #       - bearerAuth: []
+  #     parameters:
+  #       - in: path
+  #         name: formId
+  #         required: true
+  #         schema:
+  #           type: string
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/CreateShareLinkRequest'
+  #     responses:
+  #       '201':
+  #         description: Посилання створено
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ShareLinkResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    refreshCookie:
+      type: apiKey
+      in: cookie
+      name: refreshToken
+      description: HttpOnly refresh token cookie
+
+  # schemas:
+  #   # ============ Відповіді ============
+  #   SubmitFormRequest:
+  #     type: object
+  #     required: [responses]
+  #     properties:
+  #       responses:
+  #         type: array
+  #         items:
+  #           $ref: '#/components/schemas/FieldResponseRequest'
+  #       metadata:
+  #         type: object
+
+  #   FieldResponseRequest:
+  #     type: object
+  #     required: [fieldId]
+  #     properties:
+  #       fieldId:
+  #         type: string
+  #       fieldValue:
+  #         type: string
+  #         nullable: true
+  #       optionId:
+  #         type: string
+  #         nullable: true
+
+  #   SubmissionResponse:
+  #     type: object
+  #     properties:
+  #       id:
+  #         type: string
+  #       formId:
+  #         type: string
+  #       submittedAt:
+  #         type: string
+  #         format: date-time
+  #       responses:
+  #         type: array
+  #         items:
+  #           $ref: '#/components/schemas/FieldResponseResponse'
+
+  #   FieldResponseResponse:
+  #     type: object
+  #     properties:
+  #       id:
+  #         type: string
+  #       fieldId:
+  #         type: string
+  #       fieldValue:
+  #         type: string
+  #         nullable: true
+  #       option:
+  #         $ref: '#/components/schemas/FieldOptionResponse'
+
+  #   # ============ Посилання ============
+  #   CreateShareLinkRequest:
+  #     type: object
+  #     properties:
+  #       slug:
+  #         type: string
+  #         example: 'contact-form-2024'
+  #         pattern: '^[a-zA-Z0-9-_]+$'
+  #       name:
+  #         type: string
+  #         example: 'Посилання для клієнтів'
+  #       expiresAt:
+  #         type: string
+  #         format: date-time
+  #       maxSubmissions:
+  #         type: integer
+  #         example: 100
+  #       submissionLimitEnabled:
+  #         type: boolean
+  #         example: true
+  #       timeLimitEnabled:
+  #         type: boolean
+  #         example: false
+  #       allowMultipleResponses:
+  #         type: boolean
+  #         example: false
+  #       requireAuthentication:
+  #         type: boolean
+  #         example: false
+
+  #   ShareLinkResponse:
+  #     type: object
+  #     properties:
+  #       id:
+  #         type: string
+  #       slug:
+  #         type: string
+  #         example: 'contact-form-2024'
+  #       name:
+  #         type: string
+  #         example: 'Посилання для клієнтів'
+  #       isActive:
+  #         type: boolean
+  #         example: true
+  #       expiresAt:
+  #         type: string
+  #         format: date-time
+  #         nullable: true
+  #       maxSubmissions:
+  #         type: integer
+  #         example: 100
+  #         nullable: true
+  #       submissionCount:
+  #         type: integer
+  #         example: 42
+  #       createdAt:
+  #         type: string
+  #         format: date-time
